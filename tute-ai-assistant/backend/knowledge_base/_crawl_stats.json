@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-04-20T13:56:05.675418",
+  "stats": {
+    "total_articles": 11,
+    "success_count": 11,
+    "error_count": 0,
+    "by_section": {
+      "学校概况": {
+        "success": 6,
+        "error": 0
+      },
+      "通知公告": {
+        "success": 5,
+        "error": 0
+      }
+    }
+  },
+  "config": {
+    "max_pages": 3,
+    "max_articles": 10,
+    "delay": 1.5
+  }
+}

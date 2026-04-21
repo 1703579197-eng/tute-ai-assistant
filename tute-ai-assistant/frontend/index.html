@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天津职业技术师范大学 - 校园AI助手</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 启动 Loading 遮罩层 -->
+    <div id="startup-loader" class="startup-loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <p class="loader-text">AI 正在研读最新手册，请稍候...</p>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="app-container">
+        <!-- 头部 -->
+        <header class="chat-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="school-logo">TUTE</div>
+                    <div class="title-section">
+                        <h1>天津职业技术师范大学</h1>
+                        <p class="subtitle">校园AI助手 · 天职小咕</p>
+                    </div>
+                </div>
+                <div class="ai-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">在线</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 聊天容器 -->
+        <main class="chat-container">
+            <!-- 欢迎消息 -->
+            <div class="welcome-message">
+                <div class="ai-avatar-large">
+                    <img src="js/avatar.png" alt="天职小咕" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23701F9D%22/%3E%3Ctext x=%2250%22 y=%2265%22 font-size=%2245%22 text-anchor=%22middle%22 fill=%22white%22%3E🦉%3C/text%3E%3C/svg%3E'">
+                </div>
+                <h2>你好！我是天职小咕</h2>
+                <p>你的天津职业技术师范大学校园智能助手</p>
+                <div class="quick-questions">
+                    <p class="quick-hint">你可以问我：</p>
+                    <div class="question-tags">
+                        <button class="tag" onclick="askQuestion('转专业需要什么条件？')">转专业条件</button>
+                        <button class="tag" onclick="askQuestion('学业预警是怎么回事？')">学业预警</button>
+                        <button class="tag" onclick="askQuestion('休学怎么办理？')">休学流程</button>
+                        <button class="tag" onclick="askQuestion('课程考核不及格怎么办？')">课程考核</button>
+                        <button class="tag" onclick="askQuestion('请病假需要什么手续？')">请假规定</button>
+                        <button class="tag" onclick="askQuestion('学士学位授予条件是什么？')">学位授予</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 消息列表 -->
+            <div id="message-list" class="message-list">
+                <!-- 消息将通过 JavaScript 动态添加 -->
+            </div>
+
+            <!-- 加载指示器 -->
+            <div id="loading-indicator" class="loading-indicator hidden">
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span class="loading-text">天职小咕正在思考...</span>
+            </div>
+        </main>
+
+        <!-- 输入区域 -->
+        <footer class="input-area">
+            <div class="input-wrapper">
+                <textarea
+                    id="user-input"
+                    placeholder="输入你想了解的问题..."
+                    rows="1"
+                    maxlength="500"
+                ></textarea>
+                <button id="send-btn" class="send-btn" onclick="sendMessage()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="input-hint">按 Enter 发送，Shift + Enter 换行</p>
+            <p class="ai-disclaimer">小咕是一款 AI 工具，其回答未必正确无误。</p>
+        </footer>
+    </div>
+
+    <script src="js/chat.js"></script>
+</body>
+</html>

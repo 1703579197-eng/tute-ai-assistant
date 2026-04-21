@@ -1,0 +1,35 @@
+# Flask Web 框架
+flask==3.0.0
+flask-cors==4.0.0
+
+# 环境变量管理
+python-dotenv==1.0.0
+
+# HTTP 请求
+requests==2.31.0
+
+# AI API 客户端
+google-generativeai==0.3.0
+openai==1.6.0
+
+# RAG 核心依赖 - LangChain 生态
+langchain==0.1.0
+langchain-community==0.0.10
+langchain-text-splitters==0.0.1
+langchain-huggingface==0.0.1
+
+# 向量数据库
+faiss-cpu==1.7.4
+
+# 文本向量嵌入模型
+sentence-transformers==2.2.2
+transformers==4.36.0
+torch==2.1.0
+
+# 网页解析（爬虫使用）
+beautifulsoup4==4.12.2
+lxml==4.9.3
+
+# 数据/工具库
+numpy==1.24.3
+pydantic==2.5.0

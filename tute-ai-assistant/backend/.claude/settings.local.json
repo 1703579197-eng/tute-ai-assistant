@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(update-config)",
+      "Bash(pip install *)",
+      "Bash(python app.py)",
+      "Bash(python -c \"from config import Config; print\\('KNOWLEDGE_BASE_DIR:', Config.KNOWLEDGE_BASE_DIR\\); import os; kb = Config.KNOWLEDGE_BASE_DIR; print\\('目录存在:', os.path.exists\\(kb\\)\\); txt_files = [f for f in os.listdir\\(kb\\) if f.endswith\\('.txt'\\)]; print\\('找到txt文件:', txt_files\\)\")"
+    ]
+  }
+}
