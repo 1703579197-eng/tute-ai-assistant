@@ -544,34 +544,28 @@ def check_prerequisites():
     return True, None
 
 
-# ==================== 主程序入口 ====================
+# ==================== Vercel 部署入口 ====================
 
-if __name__ == '__main__':
-    # 启动前检查 - 只有通过后才启动 Web 服务器
-    success, error_message = check_prerequisites()
+# 启动前检查 - Vercel 需要在导入时执行初始化
+success, error_message = check_prerequisites()
 
-    if not success:
-        print("\n" + "!" * 50)
-        print("启动失败 - 未能通过启动检查")
-        print("!" * 50)
-        print(f"\n错误原因: {error_message}")
-        print("\n请检查：")
-        print("  1. .env 文件中的 KNOWLEDGE_FILE_PATH 配置是否正确")
-        print("  2. .env 文件中是否配置了 API 密钥")
-        print("\n如需帮助，请参考 README.md")
-        exit(1)
-
+if not success:
+    print("\n" + "!" * 50)
+    print("启动失败 - 未能通过启动检查")
+    print("!" * 50)
+    print(f"\n错误原因: {error_message}")
+    print("\n请检查：")
+    print("  1. .env 文件中的 KNOWLEDGE_FILE_PATH 配置是否正确")
+    print("  2. .env 文件中是否配置了 API 密钥")
+    print("\n如需帮助，请参考 README.md")
+else:
     # 标记为就绪状态
     is_ready = True
     print("\n" + "=" * 50)
     print("启动检查通过 - 所有系统就绪！")
-    print(f"启动服务: http://localhost:{Config.FLASK_PORT}")
-    print("按 Ctrl+C 停止服务")
     print("=" * 50 + "\n")
 
-    # 统一使用 0.0.0.0:5000，确保外网可访问
-    app.run(
-        host='0.0.0.0',
-        port=5000,
-        debug=True
-    )
+# Vercel 入口 - 导出 app 实例供 WSGI 调用
+# 本地开发时使用: flask run 或 python -m flask run
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

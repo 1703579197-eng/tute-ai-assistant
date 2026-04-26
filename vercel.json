@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "tute-ai-assistant/backend/app.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "tute-ai-assistant/backend/app.py"
+    }
+  ],
+  "env": {
+    "PYTHONUNBUFFERED": "1",
+    "PYTHONIOENCODING": "utf-8"
+  }
+}
