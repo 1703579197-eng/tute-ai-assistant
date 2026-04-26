@@ -55,44 +55,32 @@ class VectorStore:
             print("Embedding 模型加载完成！")
 
     def load_and_index_documents(self):
-        """加载文档并建立向量索引"""
+        """加载文档并建立向量索引（从单个文件）"""
         self.init_embeddings()
 
         all_chunks = []
-        sources = []
-        loaded_files = []
+        kb_file = Config.KNOWLEDGE_FILE_PATH
+        print(f"正在加载知识库文件: {kb_file}")
 
-        # 动态加载 knowledge_base 目录中的所有 .txt 文件
-        kb_dir = Config.KNOWLEDGE_BASE_DIR
-        print(f"正在扫描知识库目录: {kb_dir}")
-
-        if os.path.exists(kb_dir) and os.path.isdir(kb_dir):
-            txt_files = [f for f in os.listdir(kb_dir) if f.endswith('.txt')]
-            print(f"找到 {len(txt_files)} 个文件: {txt_files}")  # 新增日志：显示加载的文件数量
-
-            for filename in txt_files:
-                filepath = os.path.join(kb_dir, filename)
-                try:
-                    with open(filepath, 'r', encoding='utf-8') as f:
-                        content = f.read()
-                        if not content.strip():
-                            print(f"  [跳过] 空文件: {filename}")
-                            continue
+        if os.path.exists(kb_file) and os.path.isfile(kb_file):
+            try:
+                with open(kb_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    if content.strip():
                         chunks = self.text_splitter.split_text(content)
                         all_chunks.extend(chunks)
-                        # 从文件名生成来源标签
-                        source_name = filename.replace('.txt', '')
-                        sources.extend([source_name] * len(chunks))
-                        loaded_files.append(filename)
-                        print(f"  [OK] {filename}: {len(chunks)} 个片段")
-                except Exception as e:
-                    print(f"  [错误] 读取失败 {filename}: {e}")
+                        print(f"  [OK] 知识库: {len(chunks)} 个片段")
+                    else:
+                        print(f"  [警告] 知识库文件为空: {kb_file}")
+            except Exception as e:
+                print(f"  [错误] 读取知识库文件失败: {e}")
         else:
-            print(f"[警告] 知识库目录不存在: {kb_dir}")
+            print(f"[警告] 知识库文件不存在: {kb_file}")
+            print("  提示: 在 .env 中设置 KNOWLEDGE_FILE_PATH 或创建默认文件")
 
         if all_chunks:
             # 构建元数据
-            metadatas = [{"source": src, "chunk_index": i} for i, src in enumerate(sources)]
+            metadatas = [{"source": "知识库", "chunk_index": i} for i in range(len(all_chunks))]
 
             # 创建 FAISS 向量库
             print(f"正在构建向量索引，共 {len(all_chunks)} 个片段...")
@@ -104,8 +92,8 @@ class VectorStore:
             print("向量索引构建完成！")
             return True
         else:
-            print("警告：没有加载到任何文档内容")
-            return False
+            print("警告：知识库为空，将使用通用模式回答问题")
+            return True  # 允许空知识库启动
 
     def search(self, query: str, k: int = 3):
         """
@@ -307,33 +295,33 @@ def build_system_prompt(retrieved_docs: list, user_question: str, history_text: 
     """
     构建学长风格的 System Prompt
 
-    角色设定：精通校规、亲切自然的学长
+    角色设定：熟悉学校、亲切自然的学长
     """
 
     # 将检索到的片段组织成引用材料
     context_parts = []
     for i, doc in enumerate(retrieved_docs, 1):
-        source = doc.metadata.get("source", "学生手册")
+        source = doc.metadata.get("source", "知识库")
         context_parts.append(f"【参考资料{i}】（来自{source}）\n{doc.page_content}")
 
-    context_text = "\n\n".join(context_parts) if context_parts else "（本次问题未匹配到具体校规条款）"
+    context_text = "\n\n".join(context_parts) if context_parts else "（本次问题未匹配到知识库内容）"
 
-    prompt = f"""你是天津职业技术师范大学的一位热心学长，名叫"天职小咕"。你熟悉学校的一草一木，对校规校纪了如指掌，平时喜欢帮助学弟学妹解答各种问题。
+    prompt = f"""你是天津职业技术师范大学的一位热心学长，名叫"天职小咕"。你熟悉学校的方方面面，平时喜欢帮助学弟学妹解答各种问题。
 
 【你的性格特点】
-1. 亲切自然：像朋友聊天一样，不说教、不照搬条文
-2. 善于联想：能根据校规推断出实际生活中的答案
+1. 亲切自然：像朋友聊天一样，不说教
+2. 善于联想：能根据已有信息推断出实际答案
 3. 实用主义：不仅告诉"是什么"，还告诉"怎么办"
 4. 幽默风趣：偶尔来点轻松的表达，但保持尊重
 
 【回答原则】
-- 严禁直接复制粘贴原文，要用自己的话归纳总结
-- 如果资料里没直接说，可以根据已有信息合理推断
-- 结合学生的实际场景给出建议（比如"熬夜打游戏"要提醒断电时间）
+- 知识库有相关内容时，基于资料回答，严禁直接复制粘贴原文
+- 知识库没有相关内容时，根据你的知识合理回答
+- 结合学生的实际场景给出建议
 - 使用口语化表达，可以适当使用"咱学校"、"学长建议"、"注意哈"等亲切用语
 - 如果确实完全不知道，诚实地说"这个学长也不太确定，建议问问辅导员"
 
-【检索到的校规资料】
+【检索到的知识库资料】
 {context_text}
 
 【对话历史】
@@ -342,7 +330,7 @@ def build_system_prompt(retrieved_docs: list, user_question: str, history_text: 
 【当前问题】
 学生问：{user_question}
 
-请以上述资料为基础，用学长的口吻给出亲切、实用、有温度的回答："""
+请用学长的口吻给出亲切、实用、有温度的回答："""
 
     return prompt
 
@@ -516,14 +504,23 @@ def check_prerequisites():
     print("天津职业技术师范大学校园AI助手")
     print("天职小咕 - 你的热心学长")
     print("=" * 50)
+    print("\n知识库模式: 单文件模式")
+    print(f"知识库文件: {Config.KNOWLEDGE_FILE_PATH}")
 
-    # 1. 检查知识库目录是否存在且有文件
-    kb_dir = Config.KNOWLEDGE_BASE_DIR
-    print(f"\n[启动检查] 检查知识库目录...")
-    print(f"   目录: {kb_dir}")
+    # 1. 检查知识库文件
+    kb_file = Config.KNOWLEDGE_FILE_PATH
+    print(f"\n[启动检查] 检查知识库文件...")
+    print(f"   文件: {kb_file}")
 
-    if not os.path.exists(kb_dir):
-        return False, f"知识库目录不存在: {kb_dir}"
+    if not os.path.exists(kb_file):
+        # 创建空的知识库文件
+        try:
+            os.makedirs(os.path.dirname(kb_file), exist_ok=True)
+            with open(kb_file, 'w', encoding='utf-8') as f:
+                f.write("")
+            print("   已创建空的知识库文件")
+        except Exception as e:
+            return False, f"无法创建知识库文件: {e}"
 
     # 2. 初始化 RAG 向量库
     print("\n[启动检查] 正在加载知识库（RAG 模式）...")
@@ -559,7 +556,7 @@ if __name__ == '__main__':
         print("!" * 50)
         print(f"\n错误原因: {error_message}")
         print("\n请检查：")
-        print("  1. knowledge_base/ 目录是否存在且有 .txt 文件")
+        print("  1. .env 文件中的 KNOWLEDGE_FILE_PATH 配置是否正确")
         print("  2. .env 文件中是否配置了 API 密钥")
         print("\n如需帮助，请参考 README.md")
         exit(1)

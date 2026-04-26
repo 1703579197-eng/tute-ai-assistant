@@ -33,3 +33,8 @@ lxml==4.9.3
 # 数据/工具库
 numpy==1.24.3
 pydantic==2.5.0
+
+#要求
+flask
+openai
+python-dotenv

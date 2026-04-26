@@ -22,7 +22,7 @@ class Config:
     KIMI_API_KEY = os.environ.get('KIMI_API_KEY', '')
 
     # 知识库文件路径（使用绝对路径，确保服务器运行时可找到）
-    KNOWLEDGE_BASE_DIR = os.environ.get('KNOWLEDGE_BASE_DIR') or os.path.join(BASE_DIR, 'knowledge_base')
+    KNOWLEDGE_FILE_PATH = os.environ.get('KNOWLEDGE_FILE_PATH') or os.path.join(BASE_DIR, 'knowledge_base', 'custom_knowledge.txt')
 
     # AI 助手配置
     AI_NAME = "天职小咕"
