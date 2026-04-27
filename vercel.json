@@ -1,18 +1,26 @@
 {
   "version": 2,
-  "functions": {
-    "tute-ai-assistant/backend/app.py": {
-      "maxDuration": 60
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    },
+    {
+      "src": "tute-ai-assistant/frontend/**",
+      "use": "@vercel/static"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "tute-ai-assistant/backend/app.py"
+      "dest": "/api/index.py"
     },
     {
       "src": "/(.*)",
-      "dest": "tute-ai-assistant/frontend/$1",
+      "dest": "/tute-ai-assistant/frontend/$1",
       "continue": true
     },
     {
@@ -20,7 +28,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "tute-ai-assistant/frontend/index.html"
+      "dest": "/tute-ai-assistant/frontend/index.html"
     }
   ]
 }
