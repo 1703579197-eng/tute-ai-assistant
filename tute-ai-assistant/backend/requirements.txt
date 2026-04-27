@@ -19,7 +19,7 @@ langchain-text-splitters==0.0.1
 langchain-huggingface==0.0.1
 
 # 向量数据库
-faiss-cpu==1.7.4
+faiss-cpu
 
 # 文本向量嵌入模型
 sentence-transformers==2.2.2
